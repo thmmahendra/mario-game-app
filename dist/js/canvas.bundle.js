@@ -204,17 +204,52 @@ var Platform = /*#__PURE__*/function () {
   }]);
   return Platform;
 }();
-var image = new Image();
-image.src = _img_platform_png__WEBPACK_IMPORTED_MODULE_0__["default"];
+var GenericObject = /*#__PURE__*/function () {
+  function GenericObject(_ref2) {
+    var x = _ref2.x,
+      y = _ref2.y,
+      image = _ref2.image;
+    _classCallCheck(this, GenericObject);
+    this.position = {
+      x: x,
+      y: y
+    };
+    this.image = image;
+    this.width = image.width;
+    this.height = image.height;
+  }
+  _createClass(GenericObject, [{
+    key: "draw",
+    value: function draw() {
+      c.drawImage(this.image, this.position.x, this.position.y);
+    }
+  }]);
+  return GenericObject;
+}();
+function createImage(imageSrc) {
+  var image = new Image();
+  image.src = imageSrc;
+  return image;
+}
+var platformImage = createImage(_img_platform_png__WEBPACK_IMPORTED_MODULE_0__["default"]);
 var player = new Player();
 var platforms = [new Platform({
   x: -1,
   y: 470,
-  image: image
+  image: platformImage
 }), new Platform({
-  x: image.width - 3,
+  x: platformImage.width - 3,
   y: 470,
-  image: image
+  image: platformImage
+})];
+var genericObjects = [new GenericObject({
+  x: -1,
+  y: -1,
+  image: createImage(_img_background_png__WEBPACK_IMPORTED_MODULE_2__["default"])
+}), new GenericObject({
+  x: -1,
+  y: -1,
+  image: createImage(_img_hills_png__WEBPACK_IMPORTED_MODULE_1__["default"])
 })];
 var keys = {
   right: {
@@ -229,6 +264,9 @@ function animate() {
   requestAnimationFrame(animate);
   c.fillStyle = 'white';
   c.fillRect(0, 0, canvas.width, canvas.height);
+  genericObjects.forEach(function (genericObjects) {
+    genericObjects.draw();
+  });
   platforms.forEach(function (platform) {
     platform.draw();
   });
@@ -244,10 +282,16 @@ function animate() {
       platforms.forEach(function (platform) {
         platform.position.x -= 5;
       });
+      genericObjects.forEach(function (genericObject) {
+        genericObject.position.x -= 3;
+      });
     } else if (keys.left.pressed) {
       scrollOffset -= 5;
       platforms.forEach(function (platform) {
         platform.position.x += 5;
+      });
+      genericObjects.forEach(function (genericObject) {
+        genericObject.position.x += 3;
       });
     }
   }
@@ -263,8 +307,8 @@ function animate() {
   }
 }
 animate();
-addEventListener('keydown', function (_ref2) {
-  var keyCode = _ref2.keyCode;
+addEventListener('keydown', function (_ref3) {
+  var keyCode = _ref3.keyCode;
   // console.log(keyCode)
   switch (keyCode) {
     case 65:
@@ -284,8 +328,8 @@ addEventListener('keydown', function (_ref2) {
       break;
   }
 });
-addEventListener('keyup', function (_ref3) {
-  var keyCode = _ref3.keyCode;
+addEventListener('keyup', function (_ref4) {
+  var keyCode = _ref4.keyCode;
   // console.log(keyCode)
   switch (keyCode) {
     case 65:
