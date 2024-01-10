@@ -1,4 +1,6 @@
 import platform from '../img/platform.png'
+import hills from '../img/hills.png'
+import background from '../img/background.png'
 
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
@@ -55,16 +57,14 @@ class Platform {
 const image = new Image()
 image.src = platform
 
-console.log(image)
-
 const player = new Player()
 const platforms = [new Platform({
-  x: 100,
-  y: 100,
+  x: -1,
+  y: 470,
   image
 }), new Platform({
-  x: 500,
-  y: 200,
+  x: image.width - 3,
+  y: 470,
   image
 }
 )
@@ -121,7 +121,7 @@ function animate() {
       player.velocity.y = 0
     }
   })
-  if (scrollOffset > 200) {
+  if (scrollOffset > 2000) {
     console.log('You win')
   }
 }
