@@ -242,17 +242,33 @@ var Player = /*#__PURE__*/function () {
     this.height = 150;
     this.image = createImage(_img_spriteStandRight_png__WEBPACK_IMPORTED_MODULE_7__["default"]);
     this.frames = 0;
+    this.sprites = {
+      stand: {
+        right: createImage(_img_spriteStandRight_png__WEBPACK_IMPORTED_MODULE_7__["default"]),
+        left: createImage(_img_spriteStandLeft_png__WEBPACK_IMPORTED_MODULE_6__["default"]),
+        cropWidth: 177,
+        width: 66
+      },
+      run: {
+        right: createImage(_img_spriteRunRight_png__WEBPACK_IMPORTED_MODULE_5__["default"]),
+        left: createImage(_img_spriteRunLeft_png__WEBPACK_IMPORTED_MODULE_4__["default"]),
+        cropWidth: 341,
+        width: 127.875
+      }
+    };
+    this.currentSprite = this.sprites.stand.right;
+    this.currentCropWidth = 177;
   }
   _createClass(Player, [{
     key: "draw",
     value: function draw() {
-      c.drawImage(this.image, 177 * this.frames, 0, 177, 400, this.position.x, this.position.y, this.width, this.height);
+      c.drawImage(this.currentSprite, this.currentCropWidth * this.frames, 0, this.currentCropWidth, 400, this.position.x, this.position.y, this.width, this.height);
     }
   }, {
     key: "update",
     value: function update() {
       this.frames++;
-      if (this.frames > 28) this.frames = 0;
+      if (this.frames > 59 && (this.currentSprite === this.sprites.stand.right || this.currentSprite === this.sprites.stand.left)) this.frames = 0;else if (this.frames > 29 && (this.currentSprite === this.sprites.run.right || this.currentSprite === this.sprites.run.left)) this.frames = 0;
       this.draw();
       this.position.x += this.velocity.x;
       this.position.y += this.velocity.y;
@@ -315,6 +331,7 @@ var platformSmallTallImage = createImage(_img_platformSmallTall_png__WEBPACK_IMP
 var player = new Player();
 var platforms = [];
 var genericObjects = [];
+var lastKey;
 var keys = {
   right: {
     pressed: false
@@ -410,6 +427,26 @@ function animate() {
     }
   });
 
+  // sprite switching
+  if (keys.right.pressed && lastKey === 'right' && player.currentSprite !== player.sprites.run.right) {
+    player.frames = 1;
+    player.currentSprite = player.sprites.run.right;
+    player.currentCropWidth = player.sprites.run.cropWidth;
+    player.width = player.sprites.run.width;
+  } else if (keys.left.pressed && lastKey === 'left' && player.currentSprite !== player.sprites.run.left) {
+    player.currentSprite = player.sprites.run.left;
+    player.currentCropWidth = player.sprites.run.cropWidth;
+    player.width = player.sprites.run.width;
+  } else if (!keys.left.pressed && lastKey === 'left' && player.currentSprite !== player.sprites.stand.left) {
+    player.currentSprite = player.sprites.stand.left;
+    player.currentCropWidth = player.sprites.stand.cropWidth;
+    player.width = player.sprites.stand.width;
+  } else if (!keys.right.pressed && lastKey === 'right' && player.currentSprite !== player.sprites.stand.right) {
+    player.currentSprite = player.sprites.stand.right;
+    player.currentCropWidth = player.sprites.stand.cropWidth;
+    player.width = player.sprites.stand.width;
+  }
+
   // win condition
   if (scrollOffset > platformImage.width * 5 + 300 - 2) {
     console.log('You win');
@@ -429,6 +466,7 @@ addEventListener('keydown', function (_ref3) {
     case 65:
       console.log('left');
       keys.left.pressed = true;
+      lastKey = 'left';
       break;
     case 83:
       console.log('down');
@@ -436,6 +474,7 @@ addEventListener('keydown', function (_ref3) {
     case 68:
       console.log('right');
       keys.right.pressed = true;
+      lastKey = 'right';
       break;
     case 87:
       console.log('up');
